@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="container">
+            <div class="content">
+                <h2>Pokedex</h2>
+                <div class="qtd-pokemons">
+                    <input type="text" id="valor" placeholder="Quantos pokemons você quer que apareça">
+                    <button class="btn-filtrar">Filtrar</button>
+                </div>
+                <div class="box-wrapper">
+                    
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+
+        var filtrar = document.querySelector('.btn-filtrar');
+        var btn = document.querySelector('#valor');
+
+        
+        filtrar.addEventListener('click',()=>{
+            if(btn.value > 900){
+                alert('Número muito grande')
+            }else{
+                pegaPokemons(btn.value)
+            }
+        })
+
+
+        function pegaPokemons(quantidade) {
+            var pokemonBoxes = document.querySelector('.box-wrapper');
+
+            fetch('https://pokeapi.co/api/v2/pokemon?limit='+quantidade)
+            .then(response => response.json())
+            .then(function(allpokemons){
+
+                var pokemons = [];
+
+                allpokemons.results.map((poke)=>{
+                    
+                    fetch(poke.url)
+                    .then(response => response.json())
+                    .then(function(pokemonSingle){
+                        console.log(pokemonSingle)
+                        pokemons.push({nome:poke.name,image:pokemonSingle.sprites.front_default});
+
+                        if(pokemons.length == quantidade){
+
+                            pokemonBoxes.innerHTML = '';
+
+                            pokemons.map((val)=>{
+                                pokemonBoxes.innerHTML += `
+                                
+                                    <div class="box">
+                                        <img src="`+val.image+`" alt="">
+                                        <p>`+val.nome+`</p>
+                                    </div>
+
+                                    `
+                            })
+                        }
+
+                    })
+                        
+                })
+
+            });
+        }
+        
+    </script>
+</body>
+</html>
